@@ -1,13 +1,13 @@
 # Lisskha_infra repository by Yuliya Kharchenko 
 
 ## Table of contents
-- [HW 2. ChatOps](#HW\ 2.\ ChatOps.)
-- [HW 3. GCP: Bastion Host, Pritunl VPN.](#HW\ 3.\ GCP\:\ Bastion\ Host,\ Pritunl\ VPN.)
+- [HW2. ChatOps](#HW2.ChatOps.)
+- [HW3. GCP: Bastion Host, Pritunl VPN.](#HW3.GCP:BastionHost,PritunlVPN.)
     - [Bastion-host](#Bastion-host)
     - [VPN](#VPN)
-- [HW 4. GCP: Управление ресурсами через gcloud.](#HW\ 4.\ GCP:\ Управление\ ресурсами\ через\ gcloud.)
-    - [Доп. задание №1](#Доп.\ задание\ №1)
-    - [Доп. задание №2](#Доп.\ задание\ №2)
+- [HW4. GCP: Управление ресурсами через gcloud.](#HW4.GCP:Управлениересурсамичерезgcloud.)
+    - [Доп. задание №1](#Доп.задание№1)
+    - [Доп. задание №2](#Доп.задание№2)
 
 
 # HW 2. ChatOps.
@@ -73,6 +73,7 @@ Last login: Wed Sep 18 12:09:41 2019 from bastion.europe-west4-a.c.infra-170919.
  - Валидный сертификат LE реализован для https://34.90.72.45.sslip.io
 
 # HW 4. GCP: Управление ресурсами через gcloud.
+PR: https://github.com/Otus-DevOps-2019-08/Lisskha_infra/pull/4/files
 
 testapp_IP = 35.204.4.186  
 testapp_port = 9292  
