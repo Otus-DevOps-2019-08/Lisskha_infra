@@ -1,10 +1,18 @@
-# Lisskha_infra
-Lisskha Infra repository
+# Lisskha_infra repository by Yuliya Kharchenko 
 
+## Table of contents
+- [HW 3. GCP: Bastion Host, Pritunl VPN.](#HW\ 3.\ GCP\:\ Bastion\ Host,\ Pritunl\ VPN.)
+    - [Bastion-host](#Bastion-host)
+    - [VPN](#VPN)
+- [HW 4. GCP: Управление ресурсами через gcloud.](#HW\ 4.\ GCP:\ Управление\ ресурсами\ через\ gcloud.)
+
+
+# HW 3. GCP: Bastion Host, Pritunl VPN.
+
+## Bastion-host 
 bastion_IP = 34.90.72.45
 someinternalhost_IP = 10.164.0.5
 
-#### 1. Bastion-host
 На своей машине прописала в хосты:
 ```sh
 $ cat /etc/hosts
@@ -45,7 +53,7 @@ Host someinternalhost
   IdentityFile ~/.ssh/yulka
 ```
 
-#### 2. VPN
+## VPN
  - Файл setupvpn.sh описывает установку VPN-сервера, устанавливает mongod и pritunl
  - Файл cloud-bastion.ovpn - конф файл для настройки OpenVPN клиента
  - Подключилась к VPN, проверила со своей машины:
@@ -56,3 +64,9 @@ Last login: Wed Sep 18 12:09:41 2019 from bastion.europe-west4-a.c.infra-170919.
 ```
 
  - Валидный сертификат LE реализован для https://34.90.72.45.sslip.io
+
+ # HW 4. GCP: Управление ресурсами через gcloud.
+
+testapp_IP = 35.204.4.186
+testapp_port = 9292
+
