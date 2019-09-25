@@ -1,17 +1,24 @@
 # Lisskha_infra repository by Yuliya Kharchenko 
 
 ## Table of contents
+- [HW 2. ChatOps](#HW\ 2.\ ChatOps.)
 - [HW 3. GCP: Bastion Host, Pritunl VPN.](#HW\ 3.\ GCP\:\ Bastion\ Host,\ Pritunl\ VPN.)
     - [Bastion-host](#Bastion-host)
     - [VPN](#VPN)
 - [HW 4. GCP: Управление ресурсами через gcloud.](#HW\ 4.\ GCP:\ Управление\ ресурсами\ через\ gcloud.)
+    - [Доп. задание №1](#Доп.\ задание\ №1)
+    - [Доп. задание №2](#Доп.\ задание\ №2)
 
+
+# HW 2. ChatOps.
+PR: https://github.com/Otus-DevOps-2019-08/Lisskha_infra/pull/2/files
 
 # HW 3. GCP: Bastion Host, Pritunl VPN.
+PR: https://github.com/Otus-DevOps-2019-08/Lisskha_infra/pull/3/files
 
 ## Bastion-host 
-bastion_IP = 34.90.72.45
-someinternalhost_IP = 10.164.0.5
+bastion_IP = 34.90.72.45  
+someinternalhost_IP = 10.164.0.5  
 
 На своей машине прописала в хосты:
 ```sh
@@ -65,8 +72,39 @@ Last login: Wed Sep 18 12:09:41 2019 from bastion.europe-west4-a.c.infra-170919.
 
  - Валидный сертификат LE реализован для https://34.90.72.45.sslip.io
 
- # HW 4. GCP: Управление ресурсами через gcloud.
+# HW 4. GCP: Управление ресурсами через gcloud.
 
-testapp_IP = 35.204.4.186
-testapp_port = 9292
+testapp_IP = 35.204.4.186  
+testapp_port = 9292  
 
+Скрипты для настройки системы и деплоя приложения:  
+- install_ruby.sh  
+- install_mongodb.sh  
+- deploy.sh  
+
+## Доп. задание №1
+
+Скрипт, который запускается при создании инстанса:  
+- startup_script.sh
+
+Но для gcloud использую startup-script-url, команда для создания инстанса с запущенным приложением:  
+```sh
+gcloud compute instances create reddit-app2\
+  --boot-disk-size=10GB \
+  --image-family ubuntu-1604-lts \
+  --image-project=ubuntu-os-cloud \
+  --machine-type=g1-small \
+  --tags puma-server \
+  --restart-on-failure \
+  --metadata startup-script-url=https://gist.githubusercontent.com/Lisskha/f2ddcaa2c9c198e5dda445b7618eee3a/raw/e19b453ef7ec95e7512997152b1ef9f6f00066d5/startup_script.sh
+```
+
+## Доп. задание №2
+
+Создаем правило default-puma-server для firewall из консоли: 
+```sh
+gcloud compute firewall-rules create default-puma-server\
+  --allow=tcp:9292 \
+  --target-tags=puma-server \
+  --direction=INGRESSS
+```
