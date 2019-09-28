@@ -1,0 +1,6 @@
+{
+  "project_id": "infra-xxxxx",
+  "source_image_family": "ololo-base",
+  "machine_type": "x2larch"
+}
+
