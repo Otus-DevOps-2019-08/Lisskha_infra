@@ -293,5 +293,4 @@ resource "google_compute_project_metadata_item" "ssh-keys" {
 ```
 Выполнен terraform apply  
 
-- В веб-интерфейсе, в метаданные проекта был добавлен юзер appuser_web. В консоли выполнила *terraform apply* --> юзер appuser_web удалился.
-х
+- В веб-интерфейсе, в метаданные проекта был добавлен юзер appuser_web. В консоли выполнила *terraform apply*, после чего юзер appuser_web удалился.
