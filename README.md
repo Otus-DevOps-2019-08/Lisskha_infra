@@ -8,8 +8,9 @@
 - [HW4. GCP: Управление ресурсами через gcloud](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#hw-4-gcp-%D1%83%D0%BF%D1%80%D0%B0%D0%B2%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5-%D1%80%D0%B5%D1%81%D1%83%D1%80%D1%81%D0%B0%D0%BC%D0%B8-%D1%87%D0%B5%D1%80%D0%B5%D0%B7-gcloud "GCP: Управление ресурсами через gcloud")
     - [Доп. задание №1](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#%D0%B4%D0%BE%D0%BF-%D0%B7%D0%B0%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5-1 "Доп. задание №1")
     - [Доп. задание №2](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#%D0%B4%D0%BE%D0%BF-%D0%B7%D0%B0%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5-2 "Доп. задание №2")
-- [HW5. GCP: Image VM with Packer](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#hw-5-image-vm-with-packer "Image VM with Packer")
+- [HW5. GCP: Image VM with Packer](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#hw-5-gcp-image-vm-with-packer "Image VM with Packer")
     - [Доп. задание](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#%D0%B4%D0%BE%D0%BF-%D0%B7%D0%B0%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5 "Доп. задание")
+- [HW6. Terraform](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#hw-6-terraform "Terraform")
 
 
 # HW 2. ChatOps
@@ -113,6 +114,7 @@ gcloud compute firewall-rules create default-puma-server\
 ```
 
 # HW 5. GCP: Image VM with Packer
+PR: https://github.com/Otus-DevOps-2019-08/Lisskha_infra/pull/6/files
 
 В каталог config-scripts перенесены скрипты из предыдущего ДЗ:  
 deploy.sh  
@@ -173,3 +175,27 @@ packer build -var-file variables.json ubuntu16.json
   --restart-on-failure
 ```
 
+# HW 6. Terraform
+
+Установлен terraform:  
+```sh
+brew install terraform terraform-docs
+```
+В каталоге terraform добавлен конф файл, который содержит декларативное описание нашей инфраструктуры - **main.tf**  
+- Секция *provider* позволяет управлять ресурсами GCP через API
+- Секции *resource* необходимы для управления ресурсами различных сервисов GCP  
+  - resource "google_compute_instance" - для управления инстансами  
+
+
+Загружен провайдер:
+```sh
+terraform init
+```
+Посмотреть какие изменения terraform планирует произвести относительно состояния известных ему ресурсо:
+```sh
+terraform plan
+```
+Запустить инстанс, описание характеристик которого находятся в файле main.tf:
+```sh
+terraform apply -auto-approve
+```
