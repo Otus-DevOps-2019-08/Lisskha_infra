@@ -1,19 +1,21 @@
 # Lisskha_infra repository by Yuliya Kharchenko 
 
 ## Table of contents
-- [HW2. ChatOps](#HW2.ChatOps.)
-- [HW3. GCP: Bastion Host, Pritunl VPN.](#HW3.GCP:BastionHost,PritunlVPN.)
+- [HW2. ChatOps](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#hw-2-chatops "ChatOps")
+- [HW3. GCP: Bastion Host, Pritunl VPN](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#hw-3-gcp-bastion-host-pritunl-vpn "GCP: Bastion Host, Pritunl VPN")
     - [Bastion-host](#Bastion-host)
     - [VPN](#VPN)
-- [HW4. GCP: Управление ресурсами через gcloud.](#HW4.GCP:Управлениересурсамичерезgcloud.)
-    - [Доп. задание №1](#Доп.задание№1)
-    - [Доп. задание №2](#Доп.задание№2)
+- [HW4. GCP: Управление ресурсами через gcloud](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#hw-4-gcp-%D1%83%D0%BF%D1%80%D0%B0%D0%B2%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5-%D1%80%D0%B5%D1%81%D1%83%D1%80%D1%81%D0%B0%D0%BC%D0%B8-%D1%87%D0%B5%D1%80%D0%B5%D0%B7-gcloud "GCP: Управление ресурсами через gcloud")
+    - [Доп. задание №1](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#%D0%B4%D0%BE%D0%BF-%D0%B7%D0%B0%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5-1 "Доп. задание №1")
+    - [Доп. задание №2](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#%D0%B4%D0%BE%D0%BF-%D0%B7%D0%B0%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5-2 "Доп. задание №2")
+- [HW5. GCP: Image VM with Packer](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#hw-5-image-vm-with-packer "Image VM with Packer")
+    - [Доп. задание](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#%D0%B4%D0%BE%D0%BF-%D0%B7%D0%B0%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5 "Доп. задание")
 
 
-# HW 2. ChatOps.
+# HW 2. ChatOps
 PR: https://github.com/Otus-DevOps-2019-08/Lisskha_infra/pull/2/files
 
-# HW 3. GCP: Bastion Host, Pritunl VPN.
+# HW 3. GCP: Bastion Host, Pritunl VPN
 PR: https://github.com/Otus-DevOps-2019-08/Lisskha_infra/pull/3/files
 
 ## Bastion-host 
@@ -72,7 +74,7 @@ Last login: Wed Sep 18 12:09:41 2019 from bastion.europe-west4-a.c.infra-170919.
 
  - Валидный сертификат LE реализован для https://34.90.72.45.sslip.io
 
-# HW 4. GCP: Управление ресурсами через gcloud.
+# HW 4. GCP: Управление ресурсами через gcloud
 PR: https://github.com/Otus-DevOps-2019-08/Lisskha_infra/pull/4/files
 
 testapp_IP = 35.204.4.186  
@@ -109,3 +111,65 @@ gcloud compute firewall-rules create default-puma-server\
   --target-tags=puma-server \
   --direction=INGRESSS
 ```
+
+# HW 5. GCP: Image VM with Packer
+
+В каталог config-scripts перенесены скрипты из предыдущего ДЗ:  
+deploy.sh  
+install_mongodb.sh  
+install_ruby.sh  
+startup_script.sh  
+
+Скачан packer и установлены креды:
+```sh
+brew install packer  
+gcloud auth application-default login  
+```
+
+Packer шаблон, с помощью которого собираем *baked-образ* с предустановленными Ruby и MongoDB - packer/ubuntu16.json  
+В секции **builders** описано создание ВМ для билда и создание имиджа.  
+В секции **provisioners** описана установка ПО, настройка системы и конфигурация приложений.  
+
+В каталог packer/scripts/ (указан в провижинерах) скопированы скрипты:  
+install_mongodb.sh  
+install_ruby.sh  
+
+Проверка шаблона на ошибки и запуск билда:
+```sh
+packer validate ./ubuntu16.json  
+packer build ubuntu16.json
+```
+Создан инстанс с помощью созданного образа.  
+Запуск приложения:
+```
+ssh 34.68.156.211  
+git clone -b monolith https://github.com/express42/reddit.git  
+cd reddit && bundle install  
+puma -d
+```
+
+В файле *variables.json* заданы обязательные переменные и файл добавлен в .gitignore  
+В шаблоне *ubuntu16.json* были определены пользовательские переменные.  
+Запуск билда:
+```sh
+packer build -var-file variables.json ubuntu16.json
+```
+
+## Доп. задание
+
+Запускаем инстанс из созданного образа и на нем сразу же имеем запущенное приложение.  
+ - Создан шаблон **immutable.json** с "image_family": "reddit-full".  
+ - В файле packer/files/deploy.sh описана установка приложения, создание systemd unit и запуск приложения.  
+ - Запуск билда:  
+ ```sh
+ packer build -var-file variables.json immutable.json
+ ```
+ - Создание ВМ из подготовленного образа из семейства reddit-full (скрипт лежит в файле config-scripts/create-reddit-vm.sh):  
+ ```sh
+ gcloud compute instances create reddit-app-full\
+  --image-family reddit-full \
+  --image-project=infra-170919 \
+  --tags puma-server \
+  --restart-on-failure
+```
+
