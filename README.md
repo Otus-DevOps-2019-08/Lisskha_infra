@@ -8,8 +8,11 @@
 - [HW4. GCP: Управление ресурсами через gcloud](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#hw-4-gcp-%D1%83%D0%BF%D1%80%D0%B0%D0%B2%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5-%D1%80%D0%B5%D1%81%D1%83%D1%80%D1%81%D0%B0%D0%BC%D0%B8-%D1%87%D0%B5%D1%80%D0%B5%D0%B7-gcloud "GCP: Управление ресурсами через gcloud")
     - [Доп. задание №1](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#%D0%B4%D0%BE%D0%BF-%D0%B7%D0%B0%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5-1 "Доп. задание №1")
     - [Доп. задание №2](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#%D0%B4%D0%BE%D0%BF-%D0%B7%D0%B0%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5-2 "Доп. задание №2")
-- [HW5. GCP: Image VM with Packer](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#hw-5-image-vm-with-packer "Image VM with Packer")
+- [HW5. GCP: Image VM with Packer](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#hw-5-gcp-image-vm-with-packer "Image VM with Packer")
     - [Доп. задание](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#%D0%B4%D0%BE%D0%BF-%D0%B7%D0%B0%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5 "Доп. задание")
+- [HW6. Terraform](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#hw-6-terraform "Terraform")
+    - Самостоятельное задание
+    - Доп. задание №1
 
 
 # HW 2. ChatOps
@@ -113,6 +116,7 @@ gcloud compute firewall-rules create default-puma-server\
 ```
 
 # HW 5. GCP: Image VM with Packer
+PR: https://github.com/Otus-DevOps-2019-08/Lisskha_infra/pull/6/files
 
 В каталог config-scripts перенесены скрипты из предыдущего ДЗ:  
 deploy.sh  
@@ -173,3 +177,120 @@ packer build -var-file variables.json ubuntu16.json
   --restart-on-failure
 ```
 
+# HW 6. Terraform
+
+Установлен terraform:  
+```sh
+brew install terraform terraform-docs
+```
+В каталоге terraform добавлены конф файлы, которые содержат декларативное описание нашей инфраструктуры (**main.tf**), описание выходных переменных (**outputs.tf**), описание входных переменных (**variables.tf**), определение входных переменных (**terraform.tfvars**):  
+- Секция *provider* позволяет управлять ресурсами GCP через API [gist](https://gist.githubusercontent.com/Lisskha/3c48b242074c58adba2360799643c0c5/raw/1304eb1748e4631c0de9884e5e8d660e8a43b56c/provider "gist")
+- Секции *resource* необходимы для управления ресурсами различных сервисов GCP  
+  - resource "google_compute_instance" "name" - для управления инстансами [gist](https://gist.githubusercontent.com/Lisskha/3c48b242074c58adba2360799643c0c5/raw/1304eb1748e4631c0de9884e5e8d660e8a43b56c/resource%2520%2522google_compute_instance%2522 "gist")
+    - provisioner "name" - для запуска инструментов управления конфигурацией или начальной настройки системы
+    - connection - параметры подключения провиженеров к VM
+  - resource "google_compute_firewall" "name" - определить правило для фаерволла [gist](https://gist.githubusercontent.com/Lisskha/3c48b242074c58adba2360799643c0c5/raw/795e6b0207fd2aa5a5f8098f5afb4d79df666b49/Rule%2520for%2520firewall "gist") 
+- Секция *output* для вывода выходных переменных [gist](https://gist.githubusercontent.com/Lisskha/3c48b242074c58adba2360799643c0c5/raw/1304eb1748e4631c0de9884e5e8d660e8a43b56c/outputs.tf "gist")
+- Секция *variable* для описания входных переменных [gist](https://gist.githubusercontent.com/Lisskha/3c48b242074c58adba2360799643c0c5/raw/1304eb1748e4631c0de9884e5e8d660e8a43b56c/variables.tf "gist")
+- Для определения входных переменных файл terraform.tfvars [gist](https://gist.githubusercontent.com/Lisskha/3c48b242074c58adba2360799643c0c5/raw/1304eb1748e4631c0de9884e5e8d660e8a43b56c/terraform.tfvars "gist")
+
+Загружен провайдер:
+```sh
+terraform init
+```
+Посмотреть какие изменения terraform планирует произвести относительно состояния известных ему ресурсов (проверять после каждых изменений):
+```sh
+terraform plan
+```
+Запустить инстанс, описание характеристик которого находятся в файле main.tf (применять после изменений, можно без автоапрува):
+```sh
+terraform apply -auto-approve
+```
+Искать нужные атрибуты из state файла:
+```sh
+terraform show | grep nat_ip
+           nat_ip       = "34.77.129.56"
+```
+Определить публичный ключ для инстанса можно в файле *main.tf* в секции **resource "google_compute_instance"** с помощью metadata  
+
+Обновить значение выходной переменной:
+```sh
+terraform refresh
+```
+Посмотреть значение выходной переменной:
+```sh
+terraform output
+terraform output app_external_ip
+```
+Пометить ресурс, который terraform должен пересоздать, при следующем запуске terraform apply:
+```sh
+terraform taint google_compute_instance.app
+terraform plan
+terraform apply
+```
+Удалить все созданные ресурсы:
+```sh
+terraform destroy
+```
+
+## Самостоятельное задание
+
+Была определена input переменная для приватного ключа,
+использующегося в определении подключения для провижинеров (connection):
+- В terraform.tfvars добавлен параметр private_key_path с указанием пути до приватного ключа
+- В variables.tf добавлена секция:
+```sh
+variable private_key_path {
+  description = "Path to the private key used for connection"
+}
+```
+- В main.tf получаем значение пользовательской переменной:
+```sh
+    private_key = file(var.private_key_path)
+```
+
+Была определена input переменная для задания зоны в ресурсе
+"google_compute_instance" "app":
+- В variables.tf добавлена секция:
+```sh
+variable zone {
+  description = "Zone"
+  # Значение по умолчанию
+  default = "europe-west1-b"
+}
+```
+- В main.tf получаем значение пользовательской переменной:
+```sh
+resource "google_compute_instance" "app" {
+  ...
+  zone         = var.zone
+``` 
+
+Все конф.файлы были отформатированы:
+```sh
+terraform fmt
+```
+
+Создан файл terraform.tfvars.example с переменными.
+
+## Доп. задание №1
+
+- Добавлен ssh ключ для юзера appuser1 в метаданные проекта. Для этого в файле main.tf перед ресурсом google_compute_instance создана секция *resource "google_compute_project_metadata_item" "ssh-keys"*:
+```sh
+resource "google_compute_project_metadata_item" "ssh-keys" {
+  key   = "ssh-keys"
+  value = "appuser1:${file(var.public_key_path)}"
+}
+```
+Выполнен terraform apply  
+
+- Добавлены ssh ключи для нескольких пользователей в метаданные проекта. Для этого в файле main.tf секция *resource "google_compute_project_metadata_item" "ssh-keys"* приведена к следующему виду:
+```sh
+resource "google_compute_project_metadata_item" "ssh-keys" {
+  key   = "ssh-keys"
+  value = "appuser:${file(var.public_key_path)} appuser1:${file(var.public_key_path)} appuser2:${file(var.public_key_path)}"
+}
+```
+Выполнен terraform apply  
+
+- В веб-интерфейсе, в метаданные проекта был добавлен юзер appuser_web. В консоли выполнила *terraform apply*, после чего юзер appuser_web удалился.
