@@ -1,10 +1,12 @@
 terraform {
   # Версия terraform
-  required_version = "0.12.8"
+  required_version = "~> 0.12"
+  required_providers {
+    google = "~> 2.7"
+  }
 }
 
 provider "google" {
-  version = "2.15.0"
   project = var.project
   region  = var.region
 }
@@ -15,7 +17,8 @@ resource "google_compute_project_metadata_item" "ssh-keys" {
 }
 
 resource "google_compute_instance" "app" {
-  name         = "reddit-app"
+  count        = length(var.names)
+  name         = var.names[count.index]
   machine_type = "g1-small"
   zone         = var.zone
   tags         = ["reddit-app"]

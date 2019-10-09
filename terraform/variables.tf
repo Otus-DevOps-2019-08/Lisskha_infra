@@ -24,3 +24,7 @@ variable private_key_path {
   description = "Path to the private key used for connection"
 }
 
+variable "names" {
+  type = list(string)
+}
+
