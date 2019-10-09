@@ -11,8 +11,9 @@
 - [HW5. GCP: Image VM with Packer](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#hw-5-gcp-image-vm-with-packer "Image VM with Packer")
     - [Доп. задание](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#%D0%B4%D0%BE%D0%BF-%D0%B7%D0%B0%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5 "Доп. задание")
 - [HW6. Terraform](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#hw-6-terraform "Terraform")
-    - Самостоятельное задание
-    - Доп. задание №1
+    - [Самостоятельное задание](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#%D1%81%D0%B0%D0%BC%D0%BE%D1%81%D1%82%D0%BE%D1%8F%D1%82%D0%B5%D0%BB%D1%8C%D0%BD%D0%BE%D0%B5-%D0%B7%D0%B0%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5 "Самостоятельное задание")
+    - [Доп. задание №1](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#%D0%B4%D0%BE%D0%BF-%D0%B7%D0%B0%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5-1-1 "Доп. задание №1")
+    - [Доп. задание №2](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#%D0%B4%D0%BE%D0%BF-%D0%B7%D0%B0%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5-2-1 "Доп. задание №2")
 
 
 # HW 2. ChatOps
@@ -178,6 +179,7 @@ packer build -var-file variables.json ubuntu16.json
 ```
 
 # HW 6. Terraform
+PR: https://github.com/Otus-DevOps-2019-08/Lisskha_infra/pull/7/files
 
 Установлен terraform:  
 ```sh
@@ -294,3 +296,21 @@ resource "google_compute_project_metadata_item" "ssh-keys" {
 Выполнен terraform apply  
 
 - В веб-интерфейсе, в метаданные проекта был добавлен юзер appuser_web. В консоли выполнила *terraform apply*, после чего юзер appuser_web удалился.
+
+## Доп. задание №2
+
+Добавлен файл lb.tf [gist](https://gist.githubusercontent.com/Lisskha/3c48b242074c58adba2360799643c0c5/raw/058ffcf12827ea7b18c39867b38c6c8a5898596f/load%2520balancer "gist"), в котором описано создание HTTP балансировщика, правило форвардинга трафика на инстансы и хелсчек.  
+В основной конфиг для терраформа (main.tf) добавлено условие для создания нескольких одинаковых инстансов:
+```sh
+resource "google_compute_instance" "app" {
+  count        = length(var.names)
+  name         = var.names[count.index]
+```
+В файл variables.tf добавлена переменная names:
+```sh
+variable "names" {
+  type = list(string)
+}
+```
+В файл terraform.tfvars добавлены значения для переменной names.  
+В output переменные добавлены ip адрес второго инстанса и ip адрес балансера [gist](https://gist.githubusercontent.com/Lisskha/3c48b242074c58adba2360799643c0c5/raw/0bc89785938710ffbb1857d97e412b829d25b074/outputs%2520for%2520lb "gist")
