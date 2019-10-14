@@ -14,6 +14,7 @@
     - [Самостоятельное задание](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#%D1%81%D0%B0%D0%BC%D0%BE%D1%81%D1%82%D0%BE%D1%8F%D1%82%D0%B5%D0%BB%D1%8C%D0%BD%D0%BE%D0%B5-%D0%B7%D0%B0%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5 "Самостоятельное задание")
     - [Доп. задание №1](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#%D0%B4%D0%BE%D0%BF-%D0%B7%D0%B0%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5-1-1 "Доп. задание №1")
     - [Доп. задание №2](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#%D0%B4%D0%BE%D0%BF-%D0%B7%D0%B0%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5-2-1 "Доп. задание №2")
+- [HW7. Terraform. Modules](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#hw-7-terraform-modules "Terraform. Modules")
 
 
 # HW 2. ChatOps
@@ -298,6 +299,8 @@ resource "google_compute_project_metadata_item" "ssh-keys" {
 - В веб-интерфейсе, в метаданные проекта был добавлен юзер appuser_web. В консоли выполнила *terraform apply*, после чего юзер appuser_web удалился.
 
 ## Доп. задание №2
+PR: https://github.com/Otus-DevOps-2019-08/Lisskha_infra/pull/8/files
+
 
 Добавлен файл lb.tf [gist](https://gist.githubusercontent.com/Lisskha/3c48b242074c58adba2360799643c0c5/raw/058ffcf12827ea7b18c39867b38c6c8a5898596f/load%2520balancer "gist"), в котором описано создание HTTP балансировщика, правило форвардинга трафика на инстансы и хелсчек.  
 В основной конфиг для терраформа (main.tf) добавлено условие для создания нескольких одинаковых инстансов:
@@ -314,3 +317,8 @@ variable "names" {
 ```
 В файл terraform.tfvars добавлены значения для переменной names.  
 В output переменные добавлены ip адрес второго инстанса и ip адрес балансера [gist](https://gist.githubusercontent.com/Lisskha/3c48b242074c58adba2360799643c0c5/raw/0bc89785938710ffbb1857d97e412b829d25b074/outputs%2520for%2520lb "gist")
+
+Использовала - [compute_target_pool](https://www.terraform.io/docs/providers/google/r/compute_target_pool.html "compute_target_pool")
+
+# HW 7. Terraform. Modules
+

@@ -12,10 +12,10 @@
         {
             "type": "googlecompute",
             "project_id": "{{ user `project_id` }}",
-            "image_name": "reddit-base-{{ timestamp }}",
+            "image_name": "reddit-app-base",
             "network": "{{ user `network` }}",
             "image_family": "reddit-base",
-            "image_description": "{{ user `source_image_family` }} with Ruby and Mongodb",
+            "image_description": "{{ user `source_image_family` }} with Ruby",
             "source_image_family": "{{ user `source_image_family` }}",
             "zone": "europe-west1-b",
             "ssh_username": "appuser",
@@ -29,11 +29,6 @@
         {
             "type": "shell",
             "script": "scripts/install_ruby.sh",
-            "execute_command": "sudo {{.Path}}"
-        },
-        {
-            "type": "shell",
-            "script": "scripts/install_mongodb.sh",
             "execute_command": "sudo {{.Path}}"
         }
     ]
