@@ -1,0 +1,5 @@
+project          = "Project ID"
+public_key_path  = "~/path/to/user.pub"
+private_key_path = "~/path/to/user"
+disk_image       = "image-base"
+
