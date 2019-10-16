@@ -34,7 +34,7 @@ module "db" {
 }
 
 module "vpc" {
-  source = "../modules/vpc"
+  source          = "../modules/vpc"
   project         = var.project
   public_key_path = var.public_key_path
   #  zone            = var.zone
