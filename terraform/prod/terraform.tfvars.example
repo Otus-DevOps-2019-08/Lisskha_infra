@@ -1,5 +1,8 @@
-project          = "Project ID"
-public_key_path  = "~/path/to/user.pub"
-private_key_path = "~/path/to/user"
-disk_image       = "image-base"
+project          = "infra-170919"
+public_key_path  = "~/.ssh/appuser.pub"
+private_key_path = "~/.ssh/appuser"
+disk_image       = "reddit-base"
+names = [
+  "reddit-app"
+]
 
