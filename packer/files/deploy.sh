@@ -1,5 +1,5 @@
 #!/bin/bash
-cd /home/yulka/ && git clone -b monolith https://github.com/express42/reddit.git
+cd /home/appuser/ && git clone -b monolith https://github.com/express42/reddit.git
 cd reddit && bundle install
 
 tee /lib/systemd/system/puma.service << EOF
@@ -8,9 +8,9 @@ Description=Puma
 After=mongod.service
 
 [Service]
-User=yulka
-Group=yulka
-WorkingDirectory=/home/yulka/reddit/
+User=appuser
+Group=appuser
+WorkingDirectory=/home/appuser/reddit/
 ExecStart=/usr/local/bin/puma
 Restart=always
 
