@@ -15,7 +15,11 @@
     - [Доп. задание №1](https://github.com/Otus-DevOps-2019-08/Lisskha_infra/blob/master/README.md#%D0%B4%D0%BE%D0%BF-%D0%B7%D0%B0%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5-1-1 "Доп. задание №1")
     - [Доп. задание №2](https://github.com/Otus-DevOps-2019-08/Lisskha_infra/blob/master/README.md#%D0%B4%D0%BE%D0%BF-%D0%B7%D0%B0%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5-2-1 "Доп. задание №2")
 - [HW7. Terraform. Modules](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#hw-7-terraform-modules "Terraform. Modules")
-
+    - [Самостоятельное задание №1](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#%D1%81%D0%B0%D0%BC%D0%BE%D1%81%D1%82%D0%BE%D1%8F%D1%82%D0%B5%D0%BB%D1%8C%D0%BD%D0%BE%D0%B5-%D0%B7%D0%B0%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5-1 "Самостоятельное задание")
+    - [Самостоятельное задание №2](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#%D1%81%D0%B0%D0%BC%D0%BE%D1%81%D1%82%D0%BE%D1%8F%D1%82%D0%B5%D0%BB%D1%8C%D0%BD%D0%BE%D0%B5-%D0%B7%D0%B0%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5-2 "Самостоятельное задание")
+    - [Доп. задание №1](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#%D0%B4%D0%BE%D0%BF-%D0%B7%D0%B0%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5-1-2 "Доп. задание №1")
+    - [Доп. задание №2](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#%D0%B4%D0%BE%D0%BF-%D0%B7%D0%B0%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5-2-2 "Доп. задание №1") 
+- [HW8. Ansible: Основы основ]()
 
 # HW 2. ChatOps
 PR: https://github.com/Otus-DevOps-2019-08/Lisskha_infra/pull/2/files
@@ -79,6 +83,8 @@ Last login: Wed Sep 18 12:09:41 2019 from bastion.europe-west4-a.c.infra-170919.
 
  - Валидный сертификат LE реализован для https://34.90.72.45.sslip.io
 
+[Вернуться к содержанию ^](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#table-of-contents)
+
 # HW 4. GCP: Управление ресурсами через gcloud
 PR: https://github.com/Otus-DevOps-2019-08/Lisskha_infra/pull/4/files
 
@@ -116,6 +122,8 @@ gcloud compute firewall-rules create default-puma-server\
   --target-tags=puma-server \
   --direction=INGRESSS
 ```
+
+[Вернуться к содержанию ^](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#table-of-contents)
 
 # HW 5. GCP: Image VM with Packer
 PR: https://github.com/Otus-DevOps-2019-08/Lisskha_infra/pull/6/files
@@ -178,6 +186,8 @@ packer build -var-file variables.json ubuntu16.json
   --tags puma-server \
   --restart-on-failure
 ```
+
+[Вернуться к содержанию ^](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#table-of-contents)
 
 # HW 6. Terraform
 PR: https://github.com/Otus-DevOps-2019-08/Lisskha_infra/pull/7/files
@@ -319,7 +329,10 @@ variable "names" {
 
 Использовала - [compute_target_pool](https://www.terraform.io/docs/providers/google/r/compute_target_pool.html "compute_target_pool")
 
+[Вернуться к содержанию ^](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#table-of-contents)
+
 # HW 7. Terraform. Modules
+PR: https://github.com/Otus-DevOps-2019-08/Lisskha_infra/pull/9/files
 
 Создаем инфраструктуру из прошлого ДЗ, в директории terraform:
 ```sh
@@ -433,7 +446,7 @@ terraform fmt -recursive .
 terraform plan
 ```
 
-## Самостоятельное задание
+## Самостоятельное задание №1
 
 Аналогично предыдущим модулям создан модуль vpc, в
 котором определены настройки фаерволла
@@ -512,7 +525,7 @@ terraform init
 terraform apply
 terraform destroy
 ```
-## Самостоятельное задание
+## Самостоятельное задание №2
 Из каталога terraform удалила файлы main.tf, outputs.tf, terraform.tfvars, variables.tf.  
 Дополнительно к тому, что уже было сделано ранее, параметризировала модули - в модулях app и db в ресурсе google_compute_instance добавила параметры
 ```sh
@@ -674,3 +687,172 @@ terraform destroy
   - [main.tf](https://gist.githubusercontent.com/Lisskha/71b698be386a8ba75eb082e0152eec3a/raw/33234da8513f3506f7306b2ed3bc5e28575ee33a/terraform%2520modules%2520db%2520main.tf)
   - [outputs.tf](https://gist.githubusercontent.com/Lisskha/71b698be386a8ba75eb082e0152eec3a/raw/33234da8513f3506f7306b2ed3bc5e28575ee33a/terraform%2520modules%2520db%2520outputs.tf)
   - [variables.tf](https://gist.githubusercontent.com/Lisskha/71b698be386a8ba75eb082e0152eec3a/raw/33234da8513f3506f7306b2ed3bc5e28575ee33a/terraform%2520modules%2520db%2520variables.tf)
+
+[Вернуться к содержанию ^](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#table-of-contents)
+
+# HW 8. Ansible: Основы основ
+
+Установлены Python 2.7.10, pip 19.2.2 from /Library/Python/2.7/site-packages/pip (python 2.7), ansible 2.7.7  
+
+Подняла инфраструктуру в окружении stage и проверила подключение по ssh к машине с приложением:
+```sh
+ansible]$ cd ../terraform/stage/
+terraform init
+terraform apply
+ssh 104.199.111.114
+```
+Создала [инвентори файл](https://gist.githubusercontent.com/Lisskha/ce7eb22264c549630f675dcae75c03d8/raw/de5ebdec296522b8c4dc87b074e4fedaa711891d/ansible%2520inventory%2520for%2520app) и проверила, что Ansible может управлять хостом:
+```sh
+stage]$ cd ../../ansible/
+vim inventory
+ansible appserver -i ./inventory -m ping
+appserver | SUCCESS => {
+    "changed": false,
+    "ping": "pong"
+}
+```
+ - **appserver** - краткое имя, которое идентифицирует хост
+ - **-m ping** - вызываемый модуль. Ping-модуль позволяет протестировать SSH-соединение
+ - **-i ./inventory** - путь до файла инвентори
+
+Для инстанса с БД сделала то же самое, добавила dbserver в [инвентори файл](https://gist.githubusercontent.com/Lisskha/ce7eb22264c549630f675dcae75c03d8/raw/de5ebdec296522b8c4dc87b074e4fedaa711891d/ansible%2520inventory%2520for%2520app%2520and%2520db), проверила соединение с ВМ:
+```sh
+stage]$ terraform show | grep nat_ip
+            nat_ip       = "104.199.111.114"
+            nat_ip       = "34.76.4.83"
+ansible]$ vim inventory
+ansible dbserver -i ./inventory -m ping
+dbserver | SUCCESS => {
+    "changed": false,
+    "ping": "pong"
+}
+```
+ - **terraform show** - используется для того, чтобы найти внешний ip для инстанса с db в state файле терраформа
+
+Создала конф.файл для Ansible - [ansible.cfg](https://gist.githubusercontent.com/Lisskha/ce7eb22264c549630f675dcae75c03d8/raw/de5ebdec296522b8c4dc87b074e4fedaa711891d/ansible.cfg)  
+Из файла inventory удалила избыточную инфу, привела к виду:
+```sh
+appserver ansible_host=104.199.111.114
+dbserver ansible_host=34.76.4.83
+```
+***Модуль command*** позволяет запускать команды на удаленном хосте:
+```sh
+ansible dbserver -m command -a uptime
+dbserver | CHANGED | rc=0 >>
+ 20:59:06 up 31 min,  1 user,  load average: 0.00, 0.00, 0.00
+```
+ - **-a** - опция, которая передает команду как аргумент для модуля command
+
+Определила группу хостов в [инвентори файле](https://gist.githubusercontent.com/Lisskha/ce7eb22264c549630f675dcae75c03d8/raw/de5ebdec296522b8c4dc87b074e4fedaa711891d/inventory%2520with%2520name%2520group%2520hosts) и проверила работу Ansible с группой хостов:
+```sh
+ansible app -m ping
+appserver | SUCCESS => {
+    "changed": false,
+    "ping": "pong"
+}
+```
+ - **app** - имя группы
+ - **-m ping** - имя модуля Ansible
+ - **appserver** - имя сервера в группе, для которого применился модуль
+
+Можно юзать yaml для инвентори, создала файл [inventory.yml](https://gist.githubusercontent.com/Lisskha/ce7eb22264c549630f675dcae75c03d8/raw/de5ebdec296522b8c4dc87b074e4fedaa711891d/inventory.yml), проверила работоспособность:
+```sh
+ansible all -m ping -i inventory.yml
+appserver | SUCCESS => {
+    "changed": false,
+    "ping": "pong"
+}
+dbserver | SUCCESS => {
+    "changed": false,
+    "ping": "pong"
+}
+```
+ - **Ключ -i** переопределяет путь к инвентори файлу  
+
+## Выполнение команд
+Проверяем, что на серверах в группе хостов app установлены ruby и bundler:
+```sh
+ansible app -m command -a 'ruby -v'
+appserver | CHANGED | rc=0 >>
+ruby 2.3.1p112 (2016-04-26) [x86_64-linux-gnu]
+
+ansible app -m command -a 'bundler -v'
+appserver | CHANGED | rc=0 >>
+Bundler version 1.11.2
+```
+```sh
+ansible app -m shell -a 'ruby -v; bundler -v'
+appserver | CHANGED | rc=0 >>
+ruby 2.3.1p112 (2016-04-26) [x86_64-linux-gnu]
+Bundler version 1.11.2
+```
+ - **-m shell** - вызов модуля shell  
+ 
+**!** ***Модуль command*** выполняет команды, не используя оболочку (sh, bash), поэтому в нем не работают перенаправления потоков и нет доступа к некоторым переменным окружения **!** 
+
+Проверила статус mongod на серверах в группе хостов db:
+```sh
+ansible db -m shell -a 'systemctl status mongod'
+dbserver | CHANGED | rc=0 >>
+● mongod.service - High-performance, schema-free document-oriented database
+   Loaded: loaded (/lib/systemd/system/mongod.service; enabled; vendor preset: enabled)
+   Active: active (running) since Tue 2019-10-22 20:27:41 UTC; 53min ago
+...
+
+ansible db -m command -a 'systemctl status mongod'
+dbserver | CHANGED | rc=0 >>
+● mongod.service - High-performance, schema-free document-oriented database
+   Loaded: loaded (/lib/systemd/system/mongod.service; enabled; vendor preset: enabled)
+   Active: active (running) since Tue 2019-10-22 20:27:41 UTC; 54min ago
+...
+```
+```sh
+ansible db -m systemd -a name=mongod
+dbserver | SUCCESS => {
+    "changed": false,
+    "name": "mongod",
+    "status": {
+    ...
+        "ActiveState": "active",
+...
+
+ansible db -m service -a name=mongod
+dbserver | SUCCESS => {
+    "changed": false,
+    "name": "mongod",
+    "status": {
+    ...
+        "ActiveState": "active",
+...
+```
+ - **Модуль systemd** - предназначен для управления сервисами
+ - **Модуль service** - более универсален, будет работать и в более старых ОС с init.d-инициализацией  
+
+Используем **модуль git** для клонирования репозитория на app сервер:
+```sh
+ansible app -m git -a 'repo=https://github.com/express42/reddit.git dest=/home/appuser/reddit'
+```
+повторное выполнение этой команды проходит успешно, только переменная changed будет false (что значит, что изменения не произошли)   
+То же самое с модулем **command**:
+```sh
+ansible app -m command -a 'git clone https://github.com/express42/reddit.git /home/appuser/reddit'
+```
+повторное выполнение завершается ошибкой  
+Для клонирования репы (аналогично предыдущим командам) написан и выполнен плейбук [clone.yml](https://gist.githubusercontent.com/Lisskha/ce7eb22264c549630f675dcae75c03d8/raw/de5ebdec296522b8c4dc87b074e4fedaa711891d/clone.yml):
+```sh
+vim clone.yml
+ansible-playbook clone.yml
+...
+PLAY RECAP ****************************************************
+appserver                  : ok=2    changed=0    unreachable=0    failed=0
+```
+Удалила каталог с репой на удаленной машине и еще раз прогнала плейбуку:
+```sh
+ansible app -m command -a 'rm -rf /home/appuser/reddit'
+ansible-playbook clone.yml
+...
+PLAY RECAP ****************************************************
+appserver                  : ok=2    changed=1    unreachable=0    failed=0
+```
+В этом случае применилось одно изменение - *TASK [Clone repo]*  
+
