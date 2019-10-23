@@ -15,7 +15,10 @@
     - [Доп. задание №1](https://github.com/Otus-DevOps-2019-08/Lisskha_infra/blob/master/README.md#%D0%B4%D0%BE%D0%BF-%D0%B7%D0%B0%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5-1-1 "Доп. задание №1")
     - [Доп. задание №2](https://github.com/Otus-DevOps-2019-08/Lisskha_infra/blob/master/README.md#%D0%B4%D0%BE%D0%BF-%D0%B7%D0%B0%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5-2-1 "Доп. задание №2")
 - [HW7. Terraform. Modules](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#hw-7-terraform-modules "Terraform. Modules")
-
+    - [Самостоятельное задание №1](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#%D1%81%D0%B0%D0%BC%D0%BE%D1%81%D1%82%D0%BE%D1%8F%D1%82%D0%B5%D0%BB%D1%8C%D0%BD%D0%BE%D0%B5-%D0%B7%D0%B0%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5-1 "Самостоятельное задание")
+    - [Самостоятельное задание №2](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#%D1%81%D0%B0%D0%BC%D0%BE%D1%81%D1%82%D0%BE%D1%8F%D1%82%D0%B5%D0%BB%D1%8C%D0%BD%D0%BE%D0%B5-%D0%B7%D0%B0%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5-2 "Самостоятельное задание")
+    - [Доп. задание №1](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#%D0%B4%D0%BE%D0%BF-%D0%B7%D0%B0%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5-1-2 "Доп. задание №1")
+    - [Доп. задание №2](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#%D0%B4%D0%BE%D0%BF-%D0%B7%D0%B0%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5-2-2 "Доп. задание №1") 
 
 # HW 2. ChatOps
 PR: https://github.com/Otus-DevOps-2019-08/Lisskha_infra/pull/2/files
@@ -79,6 +82,8 @@ Last login: Wed Sep 18 12:09:41 2019 from bastion.europe-west4-a.c.infra-170919.
 
  - Валидный сертификат LE реализован для https://34.90.72.45.sslip.io
 
+[Вернуться к содержанию ^](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#table-of-contents)
+
 # HW 4. GCP: Управление ресурсами через gcloud
 PR: https://github.com/Otus-DevOps-2019-08/Lisskha_infra/pull/4/files
 
@@ -116,6 +121,8 @@ gcloud compute firewall-rules create default-puma-server\
   --target-tags=puma-server \
   --direction=INGRESSS
 ```
+
+[Вернуться к содержанию ^](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#table-of-contents)
 
 # HW 5. GCP: Image VM with Packer
 PR: https://github.com/Otus-DevOps-2019-08/Lisskha_infra/pull/6/files
@@ -178,6 +185,8 @@ packer build -var-file variables.json ubuntu16.json
   --tags puma-server \
   --restart-on-failure
 ```
+
+[Вернуться к содержанию ^](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#table-of-contents)
 
 # HW 6. Terraform
 PR: https://github.com/Otus-DevOps-2019-08/Lisskha_infra/pull/7/files
@@ -319,7 +328,10 @@ variable "names" {
 
 Использовала - [compute_target_pool](https://www.terraform.io/docs/providers/google/r/compute_target_pool.html "compute_target_pool")
 
+[Вернуться к содержанию ^](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#table-of-contents)
+
 # HW 7. Terraform. Modules
+PR: https://github.com/Otus-DevOps-2019-08/Lisskha_infra/pull/9/files
 
 Создаем инфраструктуру из прошлого ДЗ, в директории terraform:
 ```sh
@@ -433,7 +445,7 @@ terraform fmt -recursive .
 terraform plan
 ```
 
-## Самостоятельное задание
+## Самостоятельное задание №1
 
 Аналогично предыдущим модулям создан модуль vpc, в
 котором определены настройки фаерволла
@@ -512,7 +524,7 @@ terraform init
 terraform apply
 terraform destroy
 ```
-## Самостоятельное задание
+## Самостоятельное задание №2
 Из каталога terraform удалила файлы main.tf, outputs.tf, terraform.tfvars, variables.tf.  
 Дополнительно к тому, что уже было сделано ранее, параметризировала модули - в модулях app и db в ресурсе google_compute_instance добавила параметры
 ```sh
@@ -674,3 +686,8 @@ terraform destroy
   - [main.tf](https://gist.githubusercontent.com/Lisskha/71b698be386a8ba75eb082e0152eec3a/raw/33234da8513f3506f7306b2ed3bc5e28575ee33a/terraform%2520modules%2520db%2520main.tf)
   - [outputs.tf](https://gist.githubusercontent.com/Lisskha/71b698be386a8ba75eb082e0152eec3a/raw/33234da8513f3506f7306b2ed3bc5e28575ee33a/terraform%2520modules%2520db%2520outputs.tf)
   - [variables.tf](https://gist.githubusercontent.com/Lisskha/71b698be386a8ba75eb082e0152eec3a/raw/33234da8513f3506f7306b2ed3bc5e28575ee33a/terraform%2520modules%2520db%2520variables.tf)
+
+[Вернуться к содержанию ^](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#table-of-contents)
+
+# HW 8. Ansible: Сборка базовых образов при помощи Packer и Ansible
+
