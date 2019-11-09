@@ -18,20 +18,20 @@ resource "google_compute_instance" "db" {
     access_config {}
   }
 
-  provisioner "remote-exec" {
-    inline = [
-      "sudo sed -i 's/bindIp: 127.0.0.1/bindIp: 0.0.0.0/g' /etc/mongod.conf",
-      "sudo systemctl restart mongod",
-    ]
-  }
+  #  provisioner "remote-exec" {
+  #    inline = [
+  #      "sudo sed -i 's/bindIp: 127.0.0.1/bindIp: 0.0.0.0/g' /etc/mongod.conf",
+  #      "sudo systemctl restart mongod",
+  #    ]
+  #  }
 
-  connection {
-    host        = google_compute_instance.db.network_interface.0.access_config.0.nat_ip
-    type        = "ssh"
-    user        = "appuser"
-    agent       = false
-    private_key = file(var.private_key_path)
-  }
+  #  connection {
+  #    host        = google_compute_instance.db.network_interface.0.access_config.0.nat_ip
+  #    type        = "ssh"
+  #    user        = "appuser"
+  #    agent       = false
+  #    private_key = file(var.private_key_path)
+  #  }
 }
 
 resource "google_compute_firewall" "firewall_mongo" {
