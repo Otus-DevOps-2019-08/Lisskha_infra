@@ -8,10 +8,6 @@
   copy:
     src: puma.service
     dest: /etc/systemd/system/puma.service
-
-- name: Deamon-reload
-  become: true
-  shell: systemctl daemon-reload
   notify: reload puma
 
 - name: Add config for DB connection
