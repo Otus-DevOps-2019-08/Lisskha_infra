@@ -19,7 +19,12 @@
     - [Самостоятельное задание №2](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#%D1%81%D0%B0%D0%BC%D0%BE%D1%81%D1%82%D0%BE%D1%8F%D1%82%D0%B5%D0%BB%D1%8C%D0%BD%D0%BE%D0%B5-%D0%B7%D0%B0%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5-2 "Самостоятельное задание")
     - [Доп. задание №1](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#%D0%B4%D0%BE%D0%BF-%D0%B7%D0%B0%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5-1-2 "Доп. задание №1")
     - [Доп. задание №2](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#%D0%B4%D0%BE%D0%BF-%D0%B7%D0%B0%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5-2-2 "Доп. задание №1") 
-- [HW8. Ansible: Основы основ]()
+- [HW8. Ansible: Основы основ](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#hw-8-ansible-%D0%BE%D1%81%D0%BD%D0%BE%D0%B2%D1%8B-%D0%BE%D1%81%D0%BD%D0%BE%D0%B2 "Ansible: Основы основ")
+    - [Выполнение команд](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#%D0%B2%D1%8B%D0%BF%D0%BE%D0%BB%D0%BD%D0%B5%D0%BD%D0%B8%D0%B5-%D0%BA%D0%BE%D0%BC%D0%B0%D0%BD%D0%B4 "Выполнение команд")
+    - [Доп. задание]()
+- [HW9. Ansible: Деплой и управление конфигурацией]()
+    - [Доп. задание]()
+
 
 # HW 2. ChatOps
 PR: https://github.com/Otus-DevOps-2019-08/Lisskha_infra/pull/2/files
@@ -692,6 +697,8 @@ terraform destroy
 
 # HW 8. Ansible: Основы основ
 
+PR: https://github.com/Otus-DevOps-2019-08/Lisskha_infra/pull/10/files  
+
 Установлены Python 2.7.10, pip 19.2.2 from /Library/Python/2.7/site-packages/pip (python 2.7), ansible 2.7.7  
 
 Подняла инфраструктуру в окружении stage и проверила подключение по ssh к машине с приложением:
@@ -855,4 +862,138 @@ PLAY RECAP ****************************************************
 appserver                  : ok=2    changed=1    unreachable=0    failed=0
 ```
 В этом случае применилось одно изменение - *TASK [Clone repo]*  
+## Доп. задание
 
+
+
+# HW 9. Ansible: Деплой и управление конфигурацией
+
+В модулях app и db (terraform/modules/app/main.tf, terraform/modules/db/main.tf) закомментила код провижининга.  
+В .gitignore добавила *.retry - временные файлы ансибла.  
+В директории ansible создала плейбуку [reddit_app.yml](https://gist.githubusercontent.com/Lisskha/a741425519601b5e951adbe5ced59b0d/raw/532a0c2f75c9ff78275357f2784339cca31b2126/add%2520handlers%2520in%2520reddit_app.yml) для управления конфигами и деплоя.  
+Плейбука состоит из:  
+ - plays (сценарии) - для группировки тасок, которые должны быть выполнены на конкретном хосте (группе хостов)
+ - tasks (задания) - набор заданий, которые будут выполнены на хосте (группе хостов)
+ - tags - возможность запускать отдельные таски, имеющие определенный тег
+ - модуль template - юзаем, чтобы скопировать конфиг монги на удаленную машину
+
+в плейбуке один сценарий, для управления всеми группами хостов. для разделения группы хостов - используеются теги (для какой группы выполнить таски).  
+В директории templates создан файл [mongod.conf.j2](https://gist.githubusercontent.com/Lisskha/a741425519601b5e951adbe5ced59b0d/raw/532a0c2f75c9ff78275357f2784339cca31b2126/templates%2520mongod.conf.j2) - шаблон с параметризированным конфигом монги.  
+Чекнула плейбуку:
+```sh
+ansible-playbook --check reddit_app.yml 
+```
+Чек только группы хостов:
+```sh
+ansible-playbook --check reddit_app.yml --limit db
+```
+Применить плейбуку только для группы хостов:
+```sh
+ansible-playbook reddit_app.yml --limit db
+```
+  
+Создала каталог files, добавила файл [puma.service](https://gist.githubusercontent.com/Lisskha/a741425519601b5e951adbe5ced59b0d/raw/327a3bfef88e7b13fdcf6d802164e12917dda7a2/files%2520puma.service)  
+
+Итоговая плейбука в файле [reddit_app_one_play.yml](https://gist.githubusercontent.com/Lisskha/a741425519601b5e951adbe5ced59b0d/raw/57292393ed37ecfeaab09d2fcb2486e5756fd417/reddit_app_one_play.yml)
+ - модуль copy - для копирования файла на удаленный хост
+ - модуль systemd - для настройки автостарта puma-сервера
+ - новый handler - для reload puma
+ - шаблон templates/db_config.j2 - копируется на удаленный хост и данный шаблон содержит присвоение переменной DATABASE_URL значения, которое указано в переменной db_host (внутренний ip VM с монго)
+ - модуль git - для клонирования последней версии кода приложения
+ - модуль bundler - для установки зависимых Ruby Gems через bundle  
+
+После добавления шаблона [db_config.j2](https://gist.githubusercontent.com/Lisskha/a741425519601b5e951adbe5ced59b0d/raw/71ea361c29436cc4cc84d01fb693d93ed6ef39e9/db_config.j2), чек и прогон плейбуки:
+```sh
+ansible-playbook reddit_app.yml --check --limit app --tags app-tag
+ansible-playbook reddit_app.yml --limit app --tags app-tag
+```
+После добавления тасок для деплоя, чек и прогон плейбуки:
+```sh
+ansible-playbook reddit_app.yml --check --limit app --tags deploy-tag
+ansible-playbook reddit_app.yml --limit app --tags deploy-tag
+```
+Проверка что работает:
+http://35.233.70.78:9292/post/5db23019566a7825db5c4bd  
+зарегаться и сделать новый пост, перейти в него, перейти по указанной ссылке.
+
+## Одна плейбука, несколько сценариев
+
+Итоговый файл [reddit_app_multiple_plays.yml](https://gist.githubusercontent.com/Lisskha/a741425519601b5e951adbe5ced59b0d/raw/56081b585d442e0464ec5d8cbb2983576b2c082a/reddit_app_multiple_plays.yml)
+ - name: Configure MongoDB - сценарий для MongoDB, собран из предыдущего файла по тегам db-tag
+ - name: Configure App - сценарий для приложения, собран из предыдущего файла по тегам app-tag
+ - name: Configure Deploy - сценарий для деплоя, собран по тегам deploy-tag
+
+Пересоздала инфраструктуру, в каталоге terraform/stage/ 
+```sh
+terraform destroy
+terraform apply
+```
+Поменяла ip в инвентарях  
+Чек и запуск плейбуки
+```sh
+ansible-playbook reddit_app2.yml --tags app-tag --check
+ansible-playbook reddit_app2.yml --tags app-tag
+```
+
+## Несколько плейбуков
+
+ - [app.yml](https://gist.githubusercontent.com/Lisskha/a741425519601b5e951adbe5ced59b0d/raw/035956b7dc6dce7cecb45c0017e3595e406c1e51/app.yml)
+ - [db.yml](https://gist.githubusercontent.com/Lisskha/a741425519601b5e951adbe5ced59b0d/raw/035956b7dc6dce7cecb45c0017e3595e406c1e51/db.yml)
+ - [deploy.yml](https://gist.githubusercontent.com/Lisskha/a741425519601b5e951adbe5ced59b0d/raw/035956b7dc6dce7cecb45c0017e3595e406c1e51/deploy.yml)  
+
+Перенесла необходимые сценарии в плейбуки, удалила теги и создала основной плейбук [site.yml](https://gist.githubusercontent.com/Lisskha/a741425519601b5e951adbe5ced59b0d/raw/76a007521a59e225b1e79480317928f417ef3b0b/site.yml)  
+Пересоздала инфраструктуру stage и прогнала плейбуку:
+```sh
+terraform destroy
+terraform apply
+
+ansible-playbook site.yml --check
+ansible-playbook site.yml
+```
+
+## Провижининг в Packer
+
+Создала плейбуки:
+ - [packer_app.yml](https://gist.githubusercontent.com/Lisskha/a741425519601b5e951adbe5ced59b0d/raw/4516c8952ca323b408c662cc7b0a00f45d408a55/packer_app.yml) - устанавливает Ruby и Bundler
+ - [packer_db.yml](https://gist.githubusercontent.com/Lisskha/a741425519601b5e951adbe5ced59b0d/raw/4516c8952ca323b408c662cc7b0a00f45d408a55/packer_db.yml) - добавляет репозиторий MongoDB, устанавливает ее и включает сервис.
+   - модуль apt - устанавливает необходимые пакеты
+   - модуль apt_key - добавляет ключ для репозитория
+   - модуль apt_repository - устанавливает репозиторий
+   - модуль systemd - активирует и запускает монгу
+
+Поменяла провижинеров в пакере - вместо bash-скриптов прописала ansible-плейбуки.  
+В образе packer/app.json:
+```sh
+"provisioners": [
+    {
+        "type": "ansible",
+        "playbook_file": "ansible/packer_app.yml"
+    }
+]
+```
+В образе packer/db.json:
+```sh
+"provisioners": [
+    {
+        "type": "ansible",
+        "playbook_file": "ansible/packer_db.yml"
+    }
+]
+```
+
+В GCP удалила образы и из корня своей репы выполнила билд образов с новыми провижинерами:
+```sh
+packer build -var-file packer/variables.json packer/app.json
+packer build -var-file packer/variables.json packer/db.json
+```
+Пересоздала stage окружение (в каталоге terraform/stage/):
+```sh
+terraform destroy
+terraform apply
+```
+Запустила плейбуку для конфигурации окружения и деплоя:
+```sh
+ansible-playbook site.yml
+```
+
+## Доп. задание
