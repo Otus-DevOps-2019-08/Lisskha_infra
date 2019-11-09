@@ -1,0 +1,8 @@
+[app] #Название группы хостов
+#appserver ansible_host=35.205.72.248 #Список хостов в данной группе
+appserver ansible_host=35.233.70.78
+
+[db]
+#dbserver ansible_host=34.77.67.74
+dbserver ansible_host=35.205.72.248
+
