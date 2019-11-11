@@ -21,9 +21,12 @@
     - [Доп. задание №2](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#%D0%B4%D0%BE%D0%BF-%D0%B7%D0%B0%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5-2-2 "Доп. задание №1") 
 - [HW8. Ansible: Основы основ](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#hw-8-ansible-%D0%BE%D1%81%D0%BD%D0%BE%D0%B2%D1%8B-%D0%BE%D1%81%D0%BD%D0%BE%D0%B2 "Ansible: Основы основ")
     - [Выполнение команд](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#%D0%B2%D1%8B%D0%BF%D0%BE%D0%BB%D0%BD%D0%B5%D0%BD%D0%B8%D0%B5-%D0%BA%D0%BE%D0%BC%D0%B0%D0%BD%D0%B4 "Выполнение команд")
+    - [Доп. задание](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#%D0%B4%D0%BE%D0%BF-%D0%B7%D0%B0%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5-3)
+- [HW9. Ansible: Деплой и управление конфигурацией](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#hw-9-ansible-%D0%B4%D0%B5%D0%BF%D0%BB%D0%BE%D0%B9-%D0%B8-%D1%83%D0%BF%D1%80%D0%B0%D0%B2%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5-%D0%BA%D0%BE%D0%BD%D1%84%D0%B8%D0%B3%D1%83%D1%80%D0%B0%D1%86%D0%B8%D0%B5%D0%B9)
+    - [Доп. задание](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#%D0%B4%D0%BE%D0%BF-%D0%B7%D0%B0%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5-3)
+- [HW10. Ansible: Работа с ролями и окружениями]()
     - [Доп. задание]()
-- [HW9. Ansible: Деплой и управление конфигурацией]()
-    - [Доп. задание]()
+
 
 
 # HW 2. ChatOps
@@ -864,9 +867,11 @@ appserver                  : ok=2    changed=1    unreachable=0    failed=0
 В этом случае применилось одно изменение - *TASK [Clone repo]*  
 ## Доп. задание
 
-
+[Вернуться к содержанию ^](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#table-of-contents)
 
 # HW 9. Ansible: Деплой и управление конфигурацией
+
+PR: https://github.com/Otus-DevOps-2019-08/Lisskha_infra/pull/11/files
 
 В модулях app и db (terraform/modules/app/main.tf, terraform/modules/db/main.tf) закомментила код провижининга.  
 В .gitignore добавила *.retry - временные файлы ансибла.  
@@ -997,3 +1002,133 @@ ansible-playbook site.yml
 ```
 
 ## Доп. задание
+
+[Вернуться к содержанию ^](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#table-of-contents)
+
+# HW 10. Ansible: Работа с ролями и окружениями
+
+Роли - для группировки и переиспользования конфигурационного кода в Ansible.  
+Ролями можно делиться и брать у сообщества в [Ansible Galaxy](https://galaxy.ansible.com/).  
+Доки по Galaxy есть на [сайте](https://galaxy.ansible.com/docs/). И справку можно получить так:
+```sh
+ansible-galaxy -h
+```
+Создать структуры ролей:
+```sh
+mkdir roles && cd roles
+ansible-galaxy init app
+ansible-galaxy init db
+```
+```sh
+ll db/
+-rw-r--r--   1 yulka  staff  1328 Nov  9 17:48 README.md
+drwxr-xr-x   3 yulka  staff    96 Nov  9 17:48 defaults   <-- Дира для переменных по дефолту
+drwxr-xr-x   2 yulka  staff    64 Nov  9 17:48 files
+drwxr-xr-x   3 yulka  staff    96 Nov  9 17:48 handlers
+drwxr-xr-x   3 yulka  staff    96 Nov  9 17:48 meta       <-- Информация о роли, создателе и зависимостях
+drwxr-xr-x   3 yulka  staff    96 Nov  9 17:48 tasks      <-- Дира для тасок
+drwxr-xr-x   2 yulka  staff    64 Nov  9 17:48 templates
+drwxr-xr-x   4 yulka  staff   128 Nov  9 17:48 tests
+drwxr-xr-x   3 yulka  staff    96 Nov  9 17:48 vars       <-- Дира для переменных, которые не должны переопределяться юзерами
+```
+**Настройка роли для DB:**
+ - Скопировала секцию tasks из ansible/db.yml в roles/db/tasks/main.yml
+ - Из директории ansible/templates скопировала шаблон mongod.conf.j2 в директорию roles/db/templates/
+ - В roles/db/tasks/main.yml теперь можно указать источник без полного пути - src:  mongod.conf.j2
+ - Скопировала хендлер из ansible/db.yml в roles/db/handlers/main.yml
+ - Определила переменные в roles/db/defaults/main.ym  
+
+**Настройка роли для APP:**
+ - По аналогии с ролью db, выполняются действия в roles/app/ 
+ 
+В файлах app.yml и db.yml убрала секции с тасками и хендлерами, добавила секции вызова роли.  
+Пересоздала stage окружение, поменяла ip адреса для db и app в inventory и в app.yml, прогнала плейбуку site.yml  
+Проверила - http://35.205.72.248:9292/  
+
+**Настройка окружения**  
+ - В каталоге ansible/ создала диры environments/stage и environments/prod
+ - Скопировала файл ansible/inventory в каталоги окружений и удалила сам файл
+ - т.к. теперь два файла инвентори, то при запуске плейбуки нужно указывать какой использовать:
+ ```sh
+ ansible-playbook -i environments/prod/inventory deploy.yml
+ ```
+ - Директория group_vars (созданная в дире плейбука или инвентаря) позволяет создавать файлы для определения переменных для группы хостов (имена должны соответствовать названиям групп в инвентаре) 
+   - В файл environments/stage/group_vars/app скопировала определение переменной db_host из app.yml (в app.yml удалила весь раздел vars)
+   - В файл environments/stage/group_vars/db скопировала определение переменной mongo_bind_ip из db.yml (в db.yml удалила весь раздел vars)
+   - Создала файл environments/stage/group_vars/all с переменными для группы all
+   - Для prod'а всё то же самое
+ - Добавила дефолтный энв roles/app/defaults/main.yml (в роли db то же самое)
+ - Добавила в таски вывод окружения, в котором работаем (roles/app/tasks/main.yml и в db):
+ ```sh
+ - name: Show info about the env this host belongs to
+  debug:
+    msg: "This host is in {{ env }} environment!!!"
+ ```
+ - Подправила файл [ansible.cfg](https://gist.githubusercontent.com/Lisskha/3c75267e085c58b116dd17deb245ab3b/raw/fedd6924cbc60a7cae9533fd1c86c6254faa6ce6/ansible.cfg)
+ - Чек и запуск
+ ```sh
+ ansible-playbook playbooks/site.yml --check
+ ansible-playbook playbooks/site.yml
+ ```
+```sh
+PLAY RECAP *******************************************
+appserver                  : ok=11   changed=8    unreachable=0    failed=0
+dbserver                   : ok=4    changed=2    unreachable=0    failed=0
+```
+
+**Работа с Community-ролями**
+ - В окружения prod и stage добавлен файл [requirements.yml](https://gist.githubusercontent.com/Lisskha/3c75267e085c58b116dd17deb245ab3b/raw/ba1290c06f5ea8e8f2325a18f5717ea4e8843975/environments%2520stage%2520requirements.yml)
+ - Установка роли:
+ ```sh
+ ansible-galaxy install -r environments/stage/requirements.yml
+ ```
+ - Дока по роли [jdauphant.nginx](https://github.com/jdauphant/ansible-role-nginx)
+ - Добавила в environments/stage/group_vars/app и environments/prod/group_vars/app переменные:
+ ```sh
+ nginx_sites:
+  default:
+    - listen 80
+    - server_name "reddit"
+    - location / {
+        proxy_pass http://127.0.0.1:9292;
+      }
+ ```
+ - В конфигурации Terraform добавила открытие 80 порта (в [модуле app](https://gist.githubusercontent.com/Lisskha/3c75267e085c58b116dd17deb245ab3b/raw/677ef5132754acd3b7f19b00bc81c2aea1c5dd31/terraform%2520modules%2520app%2520main.tf))
+ - Добавила вызов роли jdauphant.nginx в плейбуку app.yml
+ - Пересоздала инфраструктуру stage и прогнала плейбуку site.yml 
+```sh
+ansible-playbook playbooks/site.yml --check
+ansible-playbook playbooks/site.yml
+```
+## Работа с Ansible Vault
+Для безопасной работы с приватными данными используется [Ansible Vault](https://docs.ansible.com/ansible/devel/user_guide/vault.html)  
+Для шифрования используется мастер-пароль **vault key**  
+Его нужно передавать команде ansible-playbook при запуске, либо указать файл с ключом в ansible.cfg.  
+```sh
+!!! Нельзя хранить ключ-файл в Git !!!
+```
+Желательно использовать разные vault key для разных окружений.  
+ - В ansible.cfg добавила строку:
+ ```sh
+ vault_password_file = ~/.ansible/vault.key
+ ```
+ - Создала плейбуку [users.yml](https://gist.githubusercontent.com/Lisskha/3c75267e085c58b116dd17deb245ab3b/raw/555c7cc335179f5ef7433fa25eaec58c67e615e4/playbooks%2520users.yml)
+ - Создала файлы с данными пользователей для [prod](https://gist.githubusercontent.com/Lisskha/3c75267e085c58b116dd17deb245ab3b/raw/7f3a8e152932f22930ac0e5588fbb5ce9fb6b545/prod%2520credentials.yml) и [stage](https://gist.githubusercontent.com/Lisskha/3c75267e085c58b116dd17deb245ab3b/raw/7f3a8e152932f22930ac0e5588fbb5ce9fb6b545/stage%2520credentials.yml)
+ - Зашифровала вышеупомянутые файлы:
+ ```sh
+$ ansible-vault encrypt environments/prod/credentials.yml
+Encryption successful
+$ ansible-vault encrypt environments/stage/credentials.yml
+Encryption successful
+```
+ - Добавила вызов плейбуки users.yml в playbooks/site.yml и прогнала плейбуку site.yml  
+ - На виртуалке в конфиге ssh (/etc/ssh/sshd_config) разрешила подключение по паролю, проверила подключение под юзером qauser:
+ ```sh
+ $ ssh qauser@35.233.70.78
+qauser@35.233.70.78's password:
+
+Welcome to Ubuntu 16.04.6 LTS (GNU/Linux 4.15.0-1047-gcp x86_64)
+ ```
+
+[Вернуться к содержанию ^](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#table-of-contents)
+
