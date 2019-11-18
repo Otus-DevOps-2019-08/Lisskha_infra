@@ -24,8 +24,11 @@
     - [Доп. задание](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#%D0%B4%D0%BE%D0%BF-%D0%B7%D0%B0%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5-3)
 - [HW9. Ansible: Деплой и управление конфигурацией](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#hw-9-ansible-%D0%B4%D0%B5%D0%BF%D0%BB%D0%BE%D0%B9-%D0%B8-%D1%83%D0%BF%D1%80%D0%B0%D0%B2%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5-%D0%BA%D0%BE%D0%BD%D1%84%D0%B8%D0%B3%D1%83%D1%80%D0%B0%D1%86%D0%B8%D0%B5%D0%B9)
     - [Доп. задание](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#%D0%B4%D0%BE%D0%BF-%D0%B7%D0%B0%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5-3)
-- [HW10. Ansible: Работа с ролями и окружениями]()
+- [HW10. Ansible: Работа с ролями и окружениями](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#hw-10-ansible-%D1%80%D0%B0%D0%B1%D0%BE%D1%82%D0%B0-%D1%81-%D1%80%D0%BE%D0%BB%D1%8F%D0%BC%D0%B8-%D0%B8-%D0%BE%D0%BA%D1%80%D1%83%D0%B6%D0%B5%D0%BD%D0%B8%D1%8F%D0%BC%D0%B8)
     - [Доп. задание]()
+- [HW11. Ansible: Разработка и тестирование]()
+    - [Доп. задание]()
+
 
 
 
@@ -1007,6 +1010,8 @@ ansible-playbook site.yml
 
 # HW 10. Ansible: Работа с ролями и окружениями
 
+PR: https://github.com/Otus-DevOps-2019-08/Lisskha_infra/pull/12
+
 Роли - для группировки и переиспользования конфигурационного кода в Ansible.  
 Ролями можно делиться и брать у сообщества в [Ansible Galaxy](https://galaxy.ansible.com/).  
 Доки по Galaxy есть на [сайте](https://galaxy.ansible.com/docs/). И справку можно получить так:
@@ -1130,5 +1135,297 @@ qauser@35.233.70.78's password:
 Welcome to Ubuntu 16.04.6 LTS (GNU/Linux 4.15.0-1047-gcp x86_64)
  ```
 
+## Доп. задание
+
 [Вернуться к содержанию ^](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#table-of-contents)
 
+# HW 11. Ansible: Разработка и тестирование
+
+ - Скачала и установила [VirtualBox for OS X](https://download.virtualbox.org/virtualbox/6.0.14/VirtualBox-6.0.14-133895-OSX.dmg)
+ - Скачала и установила [Vagrant](https://releases.hashicorp.com/vagrant/2.2.6/vagrant_2.2.6_x86_64.dmg)
+```sh
+$ vagrant -v
+Vagrant 2.2.6
+```
+ - [Vagrant Cloud](https://app.vagrantup.com/boxes/search) - хранилище Vagrant боксов, используется для скачивания образов по дефолту
+ - Конфиг файл для описания ВМ, которые будут созданы - [Vagrantfile](https://gist.githubusercontent.com/Lisskha/104761b92e9d7d6a13c15133d7c77e0a/raw/1d8a9f1251edad3065da24b1afab77831b3eb989/Vagrantfile)
+ - Создание виртуалок, описанных в Vagrantfile (запускается в каталоге, где лежит Vagrantfile):
+```sh
+$ vagrant up
+``` 
+ - Смотреть список, скаченных на машину образов:
+```sh
+$ vagrant box list
+ubuntu/xenial64 (virtualbox, 20191113.0.0)
+```
+ - Смотреть статус виртуалок:
+```sh
+$ vagrant status
+Current machine states:
+dbserver                  running (virtualbox)
+appserver                 running (virtualbox)
+```
+ - Зайти на ВМ appserver и пингануть с нее dbserver:
+```sh
+$ vagrant ssh appserver
+Welcome to Ubuntu 16.04.6 LTS (GNU/Linux 4.4.0-168-generic x86_64)
+
+vagrant@appserver:~$ ping 10.10.10.10
+PING 10.10.10.10 (10.10.10.10) 56(84) bytes of data.
+64 bytes from 10.10.10.10: icmp_seq=1 ttl=64 time=2.33 ms
+64 bytes from 10.10.10.10: icmp_seq=2 ttl=64 time=0.750 ms
+```
+ - Vagrant поддерживает [провижинеров](https://www.vagrantup.com/docs/provisioning/)
+ - Добавлен провижининг в определение хоста dbserver: 
+```sh
+    db.vm.provision "ansible" do |ansible|
+      ansible.playbook = "playbooks/site.yml"
+      ansible.groups = {
+      "db" => ["dbserver"],
+      "db:vars" => {"mongo_bind_ip" => "0.0.0.0"}
+      }
+    end
+```
+    - db.vm.provision "ansible" do |ansible| - определение провижинера
+    - ansible.playbook - какой плейбук запускать
+    - "db" - определение группы хостов
+    - "db:vars" - определенние переменных для группы хостов
+
+ - Добавлена плейбука [base.yml](https://gist.githubusercontent.com/Lisskha/104761b92e9d7d6a13c15133d7c77e0a/raw/af3355a663d6a92efcf015f3741f078dd6cb5d73/base.yml) с использованием [модуля raw](https://docs.ansible.com/ansible/latest/modules/raw_module.html) (позволяет запускать команды по ssh), для установки питона. И добавила вызов этой плейбуки в site.yml
+
+Провижининг происходит автоматически при запуске новой машины. Если нужно применить провижининг на уже запущенной машине, то необходимо использовать **команду provision**.  
+Чтобы применить команду для конкретного хоста, нужно передать его имя в качестве аргумента:
+```sh
+$ vagrant provision dbserver
+```
+Ругнулся на то что монга не установлена.
+ - Перенесла установку монги из плейбуки packer_db.yml в роль [roles/db/tasks/install_mongo.yml](https://gist.githubusercontent.com/Lisskha/104761b92e9d7d6a13c15133d7c77e0a/raw/9a08b2b5b7ceb72c258acdc5c07ea81246df4de9/role%2520db%2520tasks%2520install_mongo.yml) и добавила тег **install** к каждому таску
+ - Разносим таски по разным файлам. Таски управления конфигом монги перенесла в файл [roles/db/tasks/config_mongo.yml](https://gist.githubusercontent.com/Lisskha/104761b92e9d7d6a13c15133d7c77e0a/raw/ea8ed4c607e9e1938fce463ea19260dfe3321964/role%2520db%2520tasks%2520config_mongo.yml)
+ - Подправила [roles/db/tasks/main.yml](https://gist.githubusercontent.com/Lisskha/104761b92e9d7d6a13c15133d7c77e0a/raw/ea8ed4c607e9e1938fce463ea19260dfe3321964/role%2520db%2520tasks%2520main.yml)
+  - Проверка:
+```sh
+$ vagrant provision dbserver
+$ vagrant ssh appserver
+
+vagrant@appserver:~$ telnet 10.10.10.10 27017
+Trying 10.10.10.10...
+Connected to 10.10.10.10.
+Escape character is '^]'.
+```
+ - Для роли app по аналогии с ролью db:
+   - из packer_app.yml в файл [roles/app/tasks/ruby.yml](https://gist.githubusercontent.com/Lisskha/104761b92e9d7d6a13c15133d7c77e0a/raw/af79c7eb8c0a36dc7527ae5f1261ebe0312fdacb/roles%2520app%2520tasks%2520ruby.yml)
+   - из main.yml в файл [roles/app/tasks/puma.yml](https://gist.githubusercontent.com/Lisskha/104761b92e9d7d6a13c15133d7c77e0a/raw/af79c7eb8c0a36dc7527ae5f1261ebe0312fdacb/roles%2520app%2520tasks%2520puma.yml)
+   - подправлен файл [roles/app/tasks/main.yml](https://gist.githubusercontent.com/Lisskha/104761b92e9d7d6a13c15133d7c77e0a/raw/af79c7eb8c0a36dc7527ae5f1261ebe0312fdacb/roles%2520app%2520tasks%2520main.yml) 
+   - определила ansible провижинер для appserver в файле Vagrantfile:
+```sh
+    app.vm.provision "ansible" do |ansible|
+      ansible.playbook = "playbooks/site.yml"
+      ansible.groups = {
+      "app" => ["appserver"],
+      "app:vars" => { "db_host" => "10.10.10.10"}
+      }
+    end
+```
+  
+**Vagrant** динамически генерирует инвентори файл для провижининга в соответствии с конфигурацией в Vagrantfile.  
+ - Посмотреть, какой инвентарь Vagrant сгенерировал при провижининге dbserver:
+```sh
+$ cat .vagrant/provisioners/ansible/inventory/vagrant_ansible_inventory
+# Generated by Vagrant
+
+dbserver ansible_host=127.0.0.1 ansible_port=2222 ansible_user='vagrant' ansible_ssh_private_key_file='/path/to/ansible/.vagrant/machines/dbserver/virtualbox/private_key'
+
+[db]
+dbserver
+
+[db:vars]
+mongo_bind_ip=0.0.0.0
+```
+ - Применила провижининг для appserver:
+ ```sh
+ $ vagrant provision appserver
+ ```
+Была ошибка. Для решения - параметризуем имя пользователя, чтобы дать возможность использовать роль для иного юзера. В роли app определим переменную по дефолту *deploy_user: appuser* (в roles/app/defaults/main.yml). В roles/app/tasks/puma.yml заменила модуль copy на **template**, для возможности параметризировать unit файл. Перенесла и переименовала шаблон:
+```sh
+$ mv roles/app/files/puma.service roles/app/templates/puma.service.j2
+```
+В файлы [roles/app/templates/puma.service.j2](https://gist.githubusercontent.com/Lisskha/104761b92e9d7d6a13c15133d7c77e0a/raw/74f668f5284f394aaa240da4bfd8930d8b53eab0/roles%2520app%2520templates%2520puma.service.j2) и [roles/app/tasks/puma.yml](https://gist.githubusercontent.com/Lisskha/104761b92e9d7d6a13c15133d7c77e0a/raw/55fd6a978675b4d961e0bfbf43f3bd85d9829a72/roles%2520app%2520tasks%2520puma.yml%2520changed) добавила переменную **deploy_user**. Также для провижининга appserver используется плейбука site.yml, которая вызывает плейбуку deploy.yml, поэтому тоже добавила переменную **deploy_user** в файл [playbooks/deploy.yml](https://gist.githubusercontent.com/Lisskha/104761b92e9d7d6a13c15133d7c77e0a/raw/f01c11df55848c3cb71b079204e43234acd64c6f/playbooks%2520deploy.yml%2520changed).  
+В блок определения провижинера в **[Vagrantfile](https://gist.githubusercontent.com/Lisskha/104761b92e9d7d6a13c15133d7c77e0a/raw/9eaf8c3d217f1b00e83278ce59694a66467dfe86/Vagrantfile%2520with%2520provision%2520changed)** добавила переменную **extra_vars** - имеет самый высокий приоритет по сравнению со всеми остальными.  
+Применение провижинера:
+```sh
+$ vagrant provision appserver
+
+PLAY RECAP ***************
+appserver                  : ok=12   changed=6    unreachable=0    failed=0
+```
+ - Удалить созданный машины (выполняется в дире ansible):
+ ```sh
+ $ vagrant destroy -f
+ ```
+ - Создать окружение:
+```sh
+$ vagrant up
+```
+ - Проверка:
+ ```sh
+ http://10.10.10.20:9292/
+ ```
+
+## Доп. задание
+
+ - В роль app добавила таску [roles/app/tasks/proxy.yml](https://gist.githubusercontent.com/Lisskha/104761b92e9d7d6a13c15133d7c77e0a/raw/c7da00160fa74339ca301bd5d11f17f9cfc5e97a/roles%2520app%2520tasks%2520proxy.yml) для добавления конфига appserver.conf для nginx на удаленной тачке.
+ - Включила эту таску в roles/app/tasks/main.yml
+ ```sh
+ ...
+ - include: proxy.yml
+ ``` 
+ - Добавила [хендлер](https://gist.githubusercontent.com/Lisskha/104761b92e9d7d6a13c15133d7c77e0a/raw/c7da00160fa74339ca301bd5d11f17f9cfc5e97a/roles%2520app%2520handlers%2520main.yml) для рестарта nginx'а
+ - Добавила шаблон конфига nginx для appserver [roles/app/templates/nginx.j2](https://gist.githubusercontent.com/Lisskha/104761b92e9d7d6a13c15133d7c77e0a/raw/c7da00160fa74339ca301bd5d11f17f9cfc5e97a/roles%2520app%2520templates%2520nginx.j2)
+ - Пересоздала окружение
+ ```sh
+ vagrant destroy -f && vagrant up
+ ```
+ - Проверила http://10.10.10.20/  
+
+### Тестирование роли
+
+Для локального тестирования Ansible ролей будем использовать **Molecule** для создания машин и проверки конфигурации и **Testinfra** для написания тестов.  
+ - Обновила python и пути в ~/.bashrc
+ ```sh
+ $ python --version
+Python 3.7.5
+```
+ - Установила virtualenv и перешла в него
+ ```sh
+pip3 install --user pipenv
+pipenv install requests
+pip3 install virtualenv
+virtualenv venv
+source venv/bin/activate
+ ```
+ - Установила virtualenvwrapper
+ ```sh 
+pip3 install virtualenvwrapper
+export WORKON_HOME=~/Envs
+source /usr/local/bin/virtualenvwrapper.sh
+mkvirtualenv project_folder
+workon project_folder
+mkproject project_folder
+deactivate
+ ```
+ - В virtualenv установила **Molecule**
+ ```sh
+pip install molecule
+ ``` 
+ - Команда **molecule init** для создания заготовки тестов для роли db
+```sh
+$ pwd
+.../Lisskha_infra/ansible/roles/db
+
+(venv) [... db]$ molecule init scenario --scenario-name default -r db -d vagrant
+--> Initializing new scenario default...
+Initialized scenario in /path/to/Lisskha_infra/ansible/roles/db/molecule/default successfully.
+```
+ - Файл [roles/db/molecule/default/tests/test_default.py](https://gist.githubusercontent.com/Lisskha/104761b92e9d7d6a13c15133d7c77e0a/raw/9f1090383a9448fef1aa7f6ef97039291fde8c46/roles%2520db%2520molecule%2520default%2520tests%2520test_default.py) с модулями Testinfra для проверки конфигурации, настраиваемой ролью db
+ - В директории ansible/roles/db создаем ВМ и смотрим список созданных машин:
+ ```sh
+$ molecule create
+
+ PLAY RECAP ****************
+    instance                   : ok=1    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+
+$ molecule list
+
+Validation completed successfully.
+Instance Name    Driver Name    Provisioner Name    Scenario Name    Created    Converged
+---------------  -------------  ------------------  ---------------  ---------  -----------
+instance         vagrant        ansible             default          true       false
+ ```
+ - Подключиться по ssh внутрь ВМ:
+ ```sh
+ $ molecule login -h instance
+
+ Welcome to Ubuntu 16.04.6 LTS (GNU/Linux 4.4.0-168-generic x86_64)
+ ```
+ - Molecule init генерит плейбуку [molecule/default/playbook.yml](https://gist.githubusercontent.com/Lisskha/104761b92e9d7d6a13c15133d7c77e0a/raw/b14a3ecdbcabe05348767d9874d296bc9ae0055c/roles%2520db%2520molecule%2520default%2520playbook.yml)
+ - Отредактировали плейбуку и применили изменения:
+ ```sh
+ $ molecule converge
+     PLAY RECAP *************
+    instance                   : ok=9    changed=7    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+```
+ - Прогнали тесты
+ ```sh
+ $ molecule verify
+
+ collected 2 items
+     tests/test_default.py ..                        [100%]
+
+    ============================== 2 passed in 4.56s ===============================
+Verifier completed successfully.
+ ```
+
+## Самостоятельная работа
+
+- Модули [Testinfra](https://testinfra.readthedocs.io/en/latest/modules.html)
+- В molecule/default/tests/test_default.py добавтла тест что монга слушает на 27017 порту:
+```sh
+# check if MongoDB is listening port 27017
+def test_mongo_port(host):
+    socket = host.socket("tcp://0.0.0.0:27017").is_listening
+```
+- Проверка:
+```sh
+$ molecule verify
+
+    ============================== 3 passed in 5.79s ===============================
+Verifier completed successfully.
+```
+- В ansible/playbooks/packer_app.yml вместо тасок добавила роль:
+```sh
+---
+- name: Install Ruby and Bundler
+  hosts: all
+  become: true
+
+  roles:
+    - app
+```
+- В ansible/roles/app/tasks/main.yml добавила тег:
+```sh
+...
+- include: ruby.yml
+  tags:
+    - install_ruby
+...
+```
+- В провидинерах в пакере добавила **extra_arguments** (по какому тегу искать) и **ansible_env_vars** (где лежат роли относительно коря репозитория infra) 
+```sh
+    "provisioners": [
+        {
+            "type": "ansible",
+            "playbook_file": "ansible/playbooks/packer_app.yml",
+            "extra_arguments": ["--tags","install_ruby"],
+            "ansible_env_vars": ["ANSIBLE_ROLES_PATH={{ pwd }}/ansible/roles"]
+        }
+    ]
+```
+- Проверила код пакера:
+```sh
+Lisskha_infra]$ packer validate -var-file packer/variables.json packer/app.json
+Template validated successfully.
+```
+- Для db сделала все то же самое
+```sh
+$ packer validate -var-file packer/variables.json packer/db.json
+Template validated successfully.
+```
+- Создала образы db и app:
+```sh
+Lisskha_infra]$ packer build -var-file packer/variables.json packer/db.json
+
+Lisskha_infra]$ packer build -var-file packer/variables.json packer/app.json
+```
+
+
+[Вернуться к содержанию ^](https://github.com/Otus-DevOps-2019-08/Lisskha_infra#table-of-contents)
